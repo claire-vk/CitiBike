@@ -5,7 +5,7 @@ shinyServer(
     
     tile_df = reactive({
       df %>% select(gender, agegroup, dayofweek, startrange) %>% 
-        filter(gender == 'female', agegroup =='17-24') %>%
+        filter(gender == input$gender_heatmap, agegroup ==input$agegroup_heatmap) %>%
         group_by(gender, agegroup, startrange, dayofweek) %>% 
         summarise(count = n())
     })
@@ -38,17 +38,16 @@ shinyServer(
       g = ggplot(tile_df(), aes(x=startrange, y=dayofweek, fill=count)) +
         geom_tile(color="white", size=0.1) +
         scale_x_discrete(expand = c(0, 0)) +
-        labs(x=NULL, y=NULL, title="Citi Bike users per day and hour") +
+        labs(x=NULL, y=NULL) +
         scale_fill_gradient(low = "#deebf7", high = "#3182bd", name = "# Riders") +
         theme_tufte(base_family="Helvetica") +
         theme(plot.title=element_text(hjust=0)) +
         theme(axis.ticks=element_blank()) +
-        theme(axis.text=element_text(size=7)) +
-        theme(legend.title=element_text(size=8)) +
-        theme(legend.text=element_text(size=6)) +
+        theme(axis.text=element_text(size=10)) +
+        theme(legend.title=element_text(size=12)) +
+        theme(legend.text=element_text(size=10)) +
         theme(legend.key.size=unit(0.2, "cm")) +
-        theme(legend.key.width=unit(1, "cm")) +
-        facet_wrap(gender~agegroup)
+        theme(legend.key.width=unit(1, "cm"))
       
       ggplotly(g)
     })
@@ -67,7 +66,6 @@ shinyServer(
     output$map = renderLeaflet({
       origin = direction_df()$start.lat_long  
       destination = direction_df()$end.lat_long 
-      google_time = select(mapdist(origin, destination, mode='bicycling'), minutes)
     
       res = google_directions(origin = origin,
                               destination = destination,
@@ -82,14 +80,15 @@ shinyServer(
     
     
     output$durationGoogle = renderInfoBox({
-      min_value <- min(state_stat[,input$selected])
-      infoBox(min_value, icon = icon("hand-o-down"))
+      google_time = select(mapdist(origin, destination, mode='bicycling'), minutes)
+      infoBox("Google estimated duration:", paste(google_time, 'min'), icon = icon("google"), color = 'orange', fill = TRUE)
     })
     
     
-    output$durationCitibike = renderInfoBox(
-      infoBox(paste("AVG.", input$selected), mean(state_stat[,input$selected]),
-              icon = icon("calculator"), fill = TRUE))
+    output$durationCitibike = renderInfoBox({
+      citibike_time = direction_df()
+      infoBox("Citi Bike estimated duration:", paste(citibike_time$avg_duration, 'min'), icon = icon("bicycle"), fill = TRUE)
+    })
     
   }
 )

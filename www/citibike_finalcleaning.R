@@ -221,6 +221,7 @@ suppressWarnings(ggplotly(g))
 
 # 2- WHERE
 
+# Not needed anymore
 # map_df = df %>% select(age, dayofweek, gender, startrange, 
 #                         start.station.longitude, start.station.latitude, start.stationname) %>%
 #     filter(gender == 'female' & age > 17 & age < 25 & startrange == '4am-8am' & dayofweek == 'Friday') %>%

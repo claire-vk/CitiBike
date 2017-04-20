@@ -33,8 +33,9 @@ shinyUI(dashboardPage(
       # first tab content
       tabItem(tabName = 'when',
               fluidRow(
-                box(title = 'A title',
-                    plotlyOutput('heatmap', height = 250)),
+                box(title = "Citi Bike users per day and hour",
+                    plotlyOutput('heatmap', height = 600),
+                    width = 8),
                 box(
                   title = 'Filter your search',
                   selectInput(inputId = 'gender_heatmap', 
@@ -44,7 +45,8 @@ shinyUI(dashboardPage(
                   selectInput(inputId = 'agegroup_heatmap', 
                               label = 'Age:', 
                               choices = Agegroup, 
-                              selected = Agegroup[1])
+                              selected = Agegroup[1]),
+                  width = 4
                 )
               )
       ),
@@ -53,7 +55,8 @@ shinyUI(dashboardPage(
       tabItem(tabName = "where",
               fluidRow(
                 box(title = 'A title',
-                    leafletOutput('tile', height = 250)),
+                    leafletOutput('tile', height = 600),
+                    width = 8),
                 box(
                   title = 'Filter your search',
                   selectInput(inputId = 'gender_tile', 
@@ -72,17 +75,19 @@ shinyUI(dashboardPage(
                               0, 24, 8),
                   radioButtons(inputId = 'startstop_tile',
                                label = '',
-                               choices = c('departing', 'arriving'))
+                               choices = c('departing', 'arriving')),
+                  width = 4
                 )
               )
       ),
       
       # third tab content
       tabItem(tabName = "how",
-              fluidRow(infoBoxOutput("durationCitibike"),
-                       infoBoxOutput("durationGoogle")),
+              fluidRow(infoBoxOutput("durationGoogle"),
+                       infoBoxOutput("durationCitibike")),
               fluidRow(box(title = 'A title',
-                           leafletOutput('map', height = 250)),
+                           leafletOutput('map', height = 500), 
+                           width = 8),
                        
                        box(title = 'Plan your trip',
                            selectInput(inputId = 'start_map', 
@@ -100,8 +105,8 @@ shinyUI(dashboardPage(
                            selectInput(inputId = 'hour_map', 
                                        label = 'Leave at:', 
                                        choices = Hour, 
-                                       selected = Hour[8])
-                       )
+                                       selected = Hour[8]),
+                       width = 4)
               )
       )
     )
