@@ -192,7 +192,8 @@ saveRDS(melt_df,file="201605-citibike-tripdata_melt.rda")
 
 # 1- WHEN
 
-tile_df = df %>% select(gender, agegroup, dayofweek, startrange) %>% # filter by user input (agegroup, gender)
+tile_df = df %>% select(gender, agegroup, dayofweek, startrange) %>% 
+    filter(gender == 'female', agegroup =='17-24') %>%
     group_by(gender, agegroup, startrange, dayofweek) %>% 
     summarise(count = n())
 
@@ -201,8 +202,6 @@ tile_df = tile_df[order(tile_df$dayofweek), ]
 
 
 #let filter by agegroup and gender
-tile_df %>% paste("Time range:", startrange , sep = "<br/>", "Day of week: ", dayofweek, sep = "<br/>", "Count: ", count)
-
 g = ggplot(tile_df, aes(x=startrange, y=dayofweek, fill=count)) +
     geom_tile(color="white", size=0.1) +
     scale_x_discrete(expand = c(0, 0)) +
@@ -222,11 +221,11 @@ suppressWarnings(ggplotly(g))
 
 # 2- WHERE
 
-map_df = df %>% select(age, dayofweek, gender, startrange, 
-                        start.station.longitude, start.station.latitude, start.stationname) %>%
-    filter(gender == 'female' & age > 17 & age < 25 & startrange == '4am-8am' & dayofweek == 'Friday') %>%
-    group_by(gender, agegroup, startrange, dayofweek, start.station.longitude, start.station.latitude) %>% 
-    summarise(count = n()) # filter by user input (agegroup, gender) radio button for arriving or leaving
+# map_df = df %>% select(age, dayofweek, gender, startrange, 
+#                         start.station.longitude, start.station.latitude, start.stationname) %>%
+#     filter(gender == 'female' & age > 17 & age < 25 & startrange == '4am-8am' & dayofweek == 'Friday') %>%
+#     group_by(gender, agegroup, startrange, dayofweek, start.station.longitude, start.station.latitude) %>% 
+#     summarise(count = n()) # filter by user input (agegroup, gender) radio button for arriving or leaving
 
 #let filter by gender, age, hour, dayofweek, arriving or departing
 map_df = melt_df %>% filter(gender == 'female', age > 17, age < 25, hour > 1, hour <5, dayofweek == 'Friday', time == 'start')
@@ -246,18 +245,6 @@ leaflet(data = map_df) %>%
 
 # 3- HOW
 # estimated time by citi bike
-
-
-subset_df2 = df2[1:5, c('start.station.name','end.station.name', 
-                        'starthour', 'tripduration.min', 'dayofweek', 
-                        'start.station.latitude', 'start.station.longitude',
-                        'end.station.latitude', 'end.station.longitude')]
-subset_df2$start.lat_long <- apply( subset_df2[ , c('start.station.latitude', 'start.station.longitude') ] , 1 , paste , collapse = ", " )
-subset_df2$end.lat_long <- apply( subset_df2[ , c('end.station.latitude', 'end.station.longitude') ] , 1 , paste , collapse = ", " )
-from <- subset_df2$start.lat_long
-to <- subset_df2$end.lat_long
-mapdist(from, to, mode='bicycling')
-
 
 direction_df = df %>% select(start.station.name, end.station.name, 
                         starthour, tripduration.min, dayofweek, 
@@ -280,7 +267,7 @@ google_df = mapdist(from, to, mode='bicycling')
 
 ## calculate the average duration according to citi bike
 
-user_selection = direction_df %>% 
+direction_df = direction_df %>% 
                   filter (start.station.name == '1 Ave & E 30 St', 
                           end.station.name == 'E 17 St & Broadway', 
                           dayofweek == 'Sunday', 
@@ -298,8 +285,8 @@ user_selection = direction_df %>%
 
 
 ## Using the first and last coordinates as the origin/destination
-origin = user_selection$start.lat_long  # grab direction_df$start.lat_long (from filtered list above)
-destination = user_selection$end.lat_long # grab direction_df$stop.lat_long (from filtered list above)
+origin = direction_df$start.lat_long  # grab direction_df$start.lat_long (from filtered list above)
+destination = direction_df$end.lat_long # grab direction_df$stop.lat_long (from filtered list above)
 
 google_time = select(mapdist(origin, destination, mode='bicycling'), minutes)
 
