@@ -188,6 +188,9 @@ melt_df = df %>% select(starthour,stophour,
                                             c('start.station.longitude', 'end.station.longitude')),
                                 times=c('start', 'stop'),
                                 v.names=c('hour', 'name', 'latitude', 'longitude'))
+
+melt_df = unique(melt_df)
+
 saveRDS(melt_df,file="201605-citibike-tripdata_melt.rda")
 
 # 1- WHEN

@@ -3,11 +3,12 @@ library(shinydashboard)
 Agegroup = sort(unique(df$agegroup))
 Gender = unique(df$gender)
 Dayofweek = unique(df$dayofweek)
-Stationname = sort(unique(df$start.station.name))
+Startstationname = sort(unique(df$start.station.name))
+Stopstationname = sort(unique(df$end.station.name))
 Hour = unique(df$starthour)
 
 shinyUI(dashboardPage(
-  dashboardHeader(title = 'Citi Tinder'),
+  dashboardHeader(title = 'CitiTinder'),
   
   #sidebar content
   dashboardSidebar(
@@ -16,6 +17,7 @@ shinyUI(dashboardPage(
       image = 'picture.png'),
     
     sidebarMenu(
+      menuItem("Intro", tabName = "intro", icon = icon("book")),
       menuItem("When", tabName = "when", icon = icon("calendar-times-o")),
       menuItem("Where", tabName = "where", icon = icon("map-marker")),
       menuItem("How", tabName = "how", icon = icon("map-signs"))
@@ -30,10 +32,14 @@ shinyUI(dashboardPage(
     ),
     
     tabItems(
-      # first tab content
+      tabItem(tabName = "intro",
+              img(src = 'https://d21xlh2maitm24.cloudfront.net/nyc/CitiBike_Logo_p.svg?mtime=20160427183115'),
+              h1('a headline'),
+              p('some text')),
+              
       tabItem(tabName = 'when',
               fluidRow(
-                box(title = "Citi Bike users per day and hour",
+                box(title = "Step 1- Find the best day and time of the day",
                     plotlyOutput('heatmap', height = 600),
                     width = 8),
                 box(
@@ -51,10 +57,9 @@ shinyUI(dashboardPage(
               )
       ),
       
-      # second tab content
       tabItem(tabName = "where",
               fluidRow(
-                box(title = 'A title',
+                box(title = 'Step 2- Locate the most concentrated areas',
                     leafletOutput('tile', height = 600),
                     width = 8),
                 box(
@@ -65,14 +70,14 @@ shinyUI(dashboardPage(
                               selected = Gender[1]),
                   sliderInput(inputId = "age_tile", 
                               label = "Age range:", 
-                              17, 98, 25),
+                              17, 98, c(17,29)),
                   selectInput(inputId = 'dayofweek_tile', 
                               label = 'Day of week:', 
                               choices = Dayofweek, 
                               selected = Dayofweek[1]),
                   sliderInput(inputId = "time_tile", 
                               label = "Time of day:", 
-                              0, 24, 8),
+                              0, 24, c(6,10)),
                   radioButtons(inputId = 'startstop_tile',
                                label = '',
                                choices = c('departing', 'arriving')),
@@ -81,30 +86,31 @@ shinyUI(dashboardPage(
               )
       ),
       
-      # third tab content
+      
       tabItem(tabName = "how",
               fluidRow(infoBoxOutput("durationGoogle"),
                        infoBoxOutput("durationCitibike")),
-              fluidRow(box(title = 'A title',
+              fluidRow(box(title = 'Step 3- Plan your ride',
                            leafletOutput('map', height = 500), 
                            width = 8),
                        
-                       box(title = 'Plan your trip',
-                           selectInput(inputId = 'start_map', 
+                       box(selectInput(inputId = 'start_map', 
                                        label = 'Departing from:', 
-                                       choices = Stationname, 
-                                       selected = Stationname[1]),
+                                       choices = Startstationname, 
+                                       selected = Startstationname[1]),
                            selectInput(inputId = 'stop_map', 
                                        label = 'Going to:', 
-                                       choices = Stationname, 
-                                       selected = Stationname[1]),
-                           selectInput(inputId = 'dayofweek_map', 
-                                       label = 'Day of week:', 
-                                       choices = Dayofweek, 
+                                       choices = Stopstationname, 
+                                       selected = Stopstationname[1]),
+                           # uiOutput("dayofweek_output"),
+                           # uiOutput("hour_output"),
+                           selectInput(inputId = 'dayofweek_map',
+                                       label = 'Day of week:',
+                                       choices = Dayofweek,
                                        selected = Dayofweek[1]),
-                           selectInput(inputId = 'hour_map', 
-                                       label = 'Leave at:', 
-                                       choices = Hour, 
+                           selectInput(inputId = 'hour_map',
+                                       label = 'Leave at (hour of the day):',
+                                       choices = Hour,
                                        selected = Hour[8]),
                        width = 4)
               )

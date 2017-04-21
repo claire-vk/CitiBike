@@ -14,8 +14,13 @@ library(ggmap)
 library(shinydashboard)
 library(googleway)
 
+#import df
 df = readRDS('./www/201605-citibike-tripdata_df.rda')
 melt_df = readRDS('./www/201605-citibike-tripdata_melt.rda')
 dir_df = readRDS('./www/201605-citibike-tripdata_direction.rda')
+
+#import icons
 bike_icon = makeIcon('www/bikeiconbw.png', iconWidth = 25, iconHeight = 38)
+
+#gMap API key
 key = "AIzaSyB1Oq-rYunwKh-I0Cgx0z2nCy0m8T5FukA"
