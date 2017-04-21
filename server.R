@@ -32,26 +32,18 @@ shinyServer(
                          time == switch(input$startstop_tile,'departing' = 'start','arriving' = 'stop'))
       })
     
-    # observe({
-    # end.station.name = unique(dir_df[start.station.name==input$start_map, end.station.name])
-    # updateSelectizeInput(
-    #   session, "stop_map",
-    #   choices = end.station.name,
-    #   selected = end.station.name[1])
-    # })
-    
     observeEvent(input$start_map, {
       
       choices <- dir_df %>%
         filter(start.station.name == input$start_map) %>%
         select(end.station.name)
       
-      choices <- unique(choices[,1])
+      choices <- sort(unique(choices[,1]))
       
       updateSelectInput(session = session, 
                         inputId = 'stop_map', 
                         choices = choices, 
-                        selected = choices[1])
+                        selected = choices[2])
       signals$dayofweek_map <- FALSE
       signals$leaflet_map <- FALSE
     })
@@ -63,6 +55,7 @@ shinyServer(
                end.station.name == input$stop_map) %>%
         select(dayofweek)
       
+      choices <- levels(dir_df$dayofweek)
       choices <- unique(choices[,1])
       
       updateSelectInput(session = session,
@@ -80,7 +73,8 @@ shinyServer(
                dayofweek == input$dayofweek_map) %>%
         select(starthour)
       
-      choices <- unique(choices[,1])
+      choices <- sort(unique(choices[,1]))
+      
       updateSelectInput(session = session,
                         inputId = 'hour_map',
                         choices = choices,
@@ -98,56 +92,6 @@ shinyServer(
       summarise(avg_duration = mean(tripduration.min))
     })
 
-    # map_df = reactive({
-    #   temp <- dir_df %>%
-    #   filter (start.station.name == input$start_map,
-    #           end.station.name == input$stop_map)
-    #   print("====================")
-    #   print(input$dayofweek_input)
-    #   if(!is.null(input$dayofweek_input)){
-    #     if(input$dayofweek_input !=""){
-    #       print('I am here')
-    #       temp <- temp %>%
-    #           filter(dayofweek == input$dayofweek_input)
-    #   }}
-    #   # 
-    #   # if(!is.null(input$hour_input)){
-    #   #   temp <- temp %>% 
-    #   #     filter(starthour == input$hour_input)
-    #   # }
-    #   return (temp)
-    #   
-    #           
-    #           # dayofweek == input$dayofweek_map,
-    #           # starthour == input$hour_map) %>%
-    #   # group_by(start.lat_long, end.lat_long) %>%
-    #   # summarise(avg_duration = mean(tripduration.min))
-    # })
-    #   
-    # output$dayofweek_output <- renderUI({
-    #   if(is.null(input$dayofweek_input)){
-    #     print('*************')
-    #     print('dayofweek is null')
-    #     selectInput(inputId = 'dayofweek_input',
-    #                 label = 'Day of week:',
-    #                 choices = c('Monday', 'Tuesday'),
-    #                 selected = NULL)
-    #   }else{
-    #     selectInput(inputId = 'dayofweek_input',
-    #                 label = 'Day of week:',
-    #                 choices = map_df()$dayofweek)
-    #   }
-    # 
-    # })
-    
-    # output$hour_output <- renderUI({
-    #   print(head(map_df()))
-    #   selectInput(inputId = 'hour_input',
-    #               label = 'Leave at (hour of the day):',
-    #               choices = unique(map_df()$hour),
-    #               selected = NULL)
-    # })
-    # 
     output$heatmap = renderPlotly({
       g = ggplot(heatmap_df(), aes(x=startrange, y=dayofweek, fill=count)) +
         geom_tile(color="white", size=0.1) +
@@ -167,9 +111,6 @@ shinyServer(
     })
     
     output$tile = renderLeaflet({
-      # arr_dep = switch(input$startstop_tile,
-      #                  'departing' = ,
-      #                  'arriving' =)
 
       leaflet(data = tile_df()) %>% 
         addTiles() %>% 
@@ -213,12 +154,25 @@ shinyServer(
       origin = coords$start.lat_long[1]
       destination = coords$end.lat_long[1]
       google_time = select(mapdist(origin, destination, mode='bicycling'), minutes)
-      infoBox("Google estimated duration:", paste(google_time, 'min'), icon = icon("google"), color = 'orange', fill = TRUE)
+      infoBox("Google estimated duration:", paste(round(google_time,1), 'min'), icon = icon("google"), color = 'orange', fill = TRUE)
     })
     
     output$durationCitibike = renderInfoBox({
-      citibike_time = map_df()
-      infoBox("Citi Bike estimated duration:", paste(citibike_time$avg_duration, 'min'), icon = icon("bicycle"), fill = TRUE)
+      citibike_time = dir_df %>%
+        filter (start.station.name == input$start_map,
+                end.station.name == input$stop_map,
+                dayofweek == input$dayofweek_map,
+                starthour == input$hour_map) %>%
+        group_by(start.lat_long, end.lat_long) %>%
+        summarise(avg_duration = mean(tripduration.min, na.rm=TRUE))
+      if(length(citibike_time$avg_duration)==0){
+        tmp = 'Not provided'
+      }else{
+        tmp = paste(citibike_time$avg_duration, 'min')
+      }
+      infoBox("CitiBike estimated duration:",
+              tmp, 
+              icon = icon("bicycle"), fill = TRUE)
     })
     
   }

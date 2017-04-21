@@ -102,8 +102,6 @@ shinyUI(dashboardPage(
                                        label = 'Going to:', 
                                        choices = Stopstationname, 
                                        selected = Stopstationname[1]),
-                           # uiOutput("dayofweek_output"),
-                           # uiOutput("hour_output"),
                            selectInput(inputId = 'dayofweek_map',
                                        label = 'Day of week:',
                                        choices = Dayofweek,
