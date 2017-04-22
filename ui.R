@@ -17,10 +17,10 @@ shinyUI(dashboardPage(
       image = 'picture.png'),
     
     sidebarMenu(
-      menuItem("Intro", tabName = "intro", icon = icon("book")),
-      menuItem("When", tabName = "when", icon = icon("calendar-times-o")),
-      menuItem("Where", tabName = "where", icon = icon("map-marker")),
-      menuItem("How", tabName = "how", icon = icon("map-signs"))
+      menuItem("The Data", tabName = "intro", icon = icon("book")),
+      menuItem("Step 1- When", tabName = "when", icon = icon("calendar-times-o")),
+      menuItem("Step 2- Where", tabName = "where", icon = icon("map-marker")),
+      menuItem("Step 3- How", tabName = "how", icon = icon("map-signs"))
     )
   ),
   
@@ -35,7 +35,13 @@ shinyUI(dashboardPage(
       tabItem(tabName = "intro",
               img(src = 'https://d21xlh2maitm24.cloudfront.net/nyc/CitiBike_Logo_p.svg?mtime=20160427183115'),
               h1('a headline'),
-              p('some text')),
+              p('some text'),
+              plotOutput('histogram'),
+              plotOutput('boxplt'),
+              tableOutput('duration_med'),
+              plotOutput('density'),
+              plotOutput('weekdays'),
+              plotOutput('weekends')),
               
       tabItem(tabName = 'when',
               fluidRow(

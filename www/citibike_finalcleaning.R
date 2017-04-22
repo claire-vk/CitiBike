@@ -121,30 +121,138 @@ df$end.station.latitude = as.numeric(df$end.station.latitude)
 
 ## 4- Understand distribution of numerical values and detect outliers
 # outliers in trip duration
+df$dayofweek = factor(df$dayofweek, levels = c("Sunday", "Saturday", "Friday", "Thursday", "Wednesday", "Tuesday", "Monday"))
 ggplot(data = df, aes(x=dayofweek, y= tripduration.min)) + 
   geom_boxplot(outlier.colour = "red", alpha = 0.1) + 
   labs(x = "day of the week", y = "trip duration (min)", title = 'trip duration: identifying outliers') +
   coord_flip() + 
   theme_pander()
 
-ggplot(data = df, aes(x=dayofweek, y= tripduration.min)) +
-  geom_boxplot(outlier.colour = "red", alpha = 0.1) +
-  labs(x = "day of the week", y = "trip duration (min)", title = 'trip duration: identifying outliers') +
-  coord_flip(ylim=c(0,60)) + 
-  theme_pander()
+df$dayofweek = factor(df$dayofweek, levels = c("Sunday", "Saturday", "Friday", "Thursday", "Wednesday", "Tuesday", "Monday"))
 
-ggplot(data = df, aes(x=tripduration.min)) + geom_bar() + coord_cartesian(xlim=c(0,120))
+    ggplot(data = df, aes(x=dayofweek, y= tripduration.min)) +
+      geom_boxplot(outlier.colour = "dodgerblue3", alpha = 0.1) +
+      labs(x = "", y = "", title = 'Identifying Outliers : Trip Duration (minutes)') +
+      coord_flip(ylim=c(0,60)) + 
+      theme_pander() +
+      theme(axis.line=element_blank(),
+          axis.ticks=element_blank(),
+          legend.title = element_blank(),
+          plot.title = element_text(size = 22, 
+                                    face = 'bold',
+                                    color = 'grey28',
+                                    margin = margin(10,0,10,0),
+                                    family = 'Helvetica',
+                                    hjust = 0.25,
+                                    vjust = 5))
+
+#median duration time per age and gender
+duration_table = df %>% group_by(gender, agegroup) %>% 
+summarise(Median = round(median(tripduration.min),1))
+
+dcast(duration_table, agegroup ~ gender)
+
+
+# ggplot(data = df, aes(x=tripduration.min, fill = gender, color = gender)) + 
+#        geom_density() + 
+#        labs(x = "Trip duration (min)", y = "", title = '') +
+#        coord_cartesian(xlim=c(0,120)) +
+#        theme_pander() +
+#        theme(axis.line=element_blank(),
+#              axis.text.y=element_blank(),
+#              axis.ticks=element_blank(),
+#              legend.title = element_blank(),
+#              strip.text.x = element_blank()) +
+#        facet_grid(agegroup~gender)
+
+density = ggplot(data = df, aes(x=tripduration.min, fill = gender, color = gender)) + 
+    geom_density(alpha = 0.1) + 
+    labs(x = "", y = "", title = 'Trip Duration (minutes) per Age Group') +
+    coord_cartesian(xlim=c(0,90)) +
+    theme_pander() +
+    theme(axis.line=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks=element_blank(),
+          legend.title = element_blank(),
+          plot.title = element_text(size = 22, 
+                                    face = 'bold',
+                                    color = 'grey28',
+                                    margin = margin(10,0,10,0),
+                                    family = 'Helvetica',
+                                    hjust = 0.025)) +
+    facet_wrap(~agegroup, strip.position = 'left')
+
 # there are a lot of outliers. We'll keep only the data for trips of 120 min or under.
 
 # outlier in bikeid. We're checking if bikeid is occuring too many times in the table which could signal potential anomaly
 table(df$bikeid) # no anomaly
 
 # outliers in age distribution
-ggplot(data = df, aes(x=age)) + 
-  geom_histogram() + 
-  theme_pander()
+histo = ggplot(data = df, aes(x=agegroup, fill= gender)) + 
+    geom_histogram(stat='count') + 
+    labs(x = "", y = "", title = '# of Riders per Age Group') +
+    theme_pander() +
+    theme(axis.line=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks=element_blank(),
+          plot.title = element_text(size = 22, 
+                                    face = 'bold',
+                                    color = 'grey28',
+                                    margin = margin(10,0,10,0),
+                                    family = 'Helvetica',
+                                    hjust = 0.025),
+          legend.title = element_blank(),
+          strip.text.x = element_blank()) +
+    facet_grid(~gender)
+
+# ggplotly(histo) %>% config(displayModeBar = F)
 
 # there are a few outliers (over 100 years old), which we will remove
+
+# analyse citibike trip by hour of day
+weekdays = df %>% 
+          filter(!dayofweek %in% c('Saturday', 'Sunday')) %>% 
+          group_by(starthour) %>% 
+          summarise(count = n())
+
+ggplot(data = weekdays, aes(x=starthour, y = count)) + 
+  geom_histogram(stat = 'identity', color = "dodgerblue3", fill = "dodgerblue3") +
+  labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekdays)') +
+  theme_pander() +
+  theme(axis.line=element_blank(),
+        axis.ticks=element_blank(),
+        plot.title = element_text(size = 22, 
+                                  face = 'bold',
+                                  color = 'grey28',
+                                  margin = margin(10,0,10,0),
+                                  family = 'Helvetica',
+                                  hjust = 0.025),
+          legend.title = element_blank(),
+          strip.text.x = element_blank()) +
+  scale_x_continuous(breaks = seq(min(weekdays$starthour), 
+                                        max(weekdays$starthour), by = 4))
+
+weekends = df %>% 
+          filter(dayofweek %in% c('Saturday', 'Sunday')) %>% 
+          group_by(starthour) %>% 
+          summarise(count = n())
+
+ggplot(data = weekends, aes(x=starthour, y = count)) + 
+  geom_histogram(stat = 'identity', color = "dodgerblue3", fill = "dodgerblue3") +
+  labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekends)') +
+  theme_pander() +
+  theme(axis.line=element_blank(),
+        axis.ticks=element_blank(),
+        plot.title = element_text(size = 22, 
+                                  face = 'bold',
+                                  color = 'grey28',
+                                  margin = margin(10,0,10,0),
+                                  family = 'Helvetica',
+                                  hjust = 0.025),
+          legend.title = element_blank(),
+          strip.text.x = element_blank()) +
+  scale_x_continuous(breaks = seq(min(weekdays$starthour), 
+                                        max(weekdays$starthour), by = 4))
 
 ## STEP 3- DATA CLEANING
 # remove outliers & keep only the relevant variables. The table will be filtered a bit more in part 1 and part 2.
@@ -222,7 +330,7 @@ g = ggplot(tile_df, aes(x=startrange, y=dayofweek, fill=count)) +
     theme(legend.key.width=unit(1, "cm")) +
     facet_wrap(gender~agegroup)
 
-suppressWarnings(ggplotly(g))
+ggplotly(g) %>% config(displayModeBar = F)
 
 # 2- WHERE
 
