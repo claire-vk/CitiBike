@@ -5,7 +5,7 @@ Gender = unique(df$gender)
 Dayofweek = unique(df$dayofweek)
 Startstationname = sort(unique(df$start.station.name))
 Stopstationname = sort(unique(df$end.station.name))
-Hour = unique(df$starthour)
+Startrange = unique(df$startrange)
 
 shinyUI(dashboardPage(
   dashboardHeader(title = 'CitiTinder'),
@@ -106,11 +106,11 @@ shinyUI(dashboardPage(
                                        label = 'Day of week:',
                                        choices = Dayofweek,
                                        selected = Dayofweek[1]),
-                           selectInput(inputId = 'hour_map',
-                                       label = 'Leave at (hour of the day):',
-                                       choices = Hour,
-                                       selected = Hour[8]),
-                       width = 4)
+                           selectInput(inputId = 'startrange_map',
+                                       label = 'Leave at (time of the day):',
+                                       choices = Startrange,
+                                       selected = Startrange[1]),
+                            width = 4)
               )
       )
     )

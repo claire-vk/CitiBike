@@ -149,16 +149,18 @@ ggplot(data = df, aes(x=age)) +
 ## STEP 3- DATA CLEANING
 # remove outliers & keep only the relevant variables. The table will be filtered a bit more in part 1 and part 2.
 df = filter(df, age <= 85 & tripduration.min <= 120)
+df = df %>% filter(!grepl(".*TEMP.*", start.station.name))
+df = df %>% filter(!grepl(".*TEMP.*", end.station.name))
 
-df = df %>% select(gender, age, agegroup, monthname, dayofweek,
-                   tripduration, tripduration.min, tripduration.mingroup,
-                   month, day, monthname, dayofweek,
-                   startday, starttime, starthour, startrange, start.station.id, 
-                   start.station.name, start.station.latitude, start.station.longitude,
-                   stopday, stoptime, stophour, end.station.id,
-                   end.station.name, end.station.latitude, end.station.longitude)
+# df = df %>% select(gender, age, agegroup, monthname, dayofweek,
+#                    tripduration, tripduration.min, tripduration.mingroup,
+#                    month, day, monthname, dayofweek,
+#                    startday, starttime, starthour, startrange, start.station.id, 
+#                    start.station.name, start.station.latitude, start.station.longitude,
+#                    stopday, stoptime, stophour, end.station.id,
+#                    end.station.name, end.station.latitude, end.station.longitude)
 
-saveRDS(df,file="201605-citibike-tripdata_clean.rda")
+# saveRDS(df,file="201605-citibike-tripdata_clean.rda")
 
 
 # STEP 4- HYPOTHESIS TESTING

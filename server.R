@@ -4,7 +4,7 @@ shinyServer(
   function(input, output, session) {
     
     signals <- reactiveValues(dayofweek_map = TRUE,
-                              hour_map = TRUE,
+                              startrange_map = TRUE,
                               leaflet_map = TRUE)
       
     heatmap_df = reactive({
@@ -62,21 +62,22 @@ shinyServer(
                         inputId = 'dayofweek_map',
                         choices = choices,
                         selected = choices[1])
-      signals$hour_map <- FALSE
+      signals$startrange_map <- FALSE
+      signals$leaflet_map <- FALSE
     })
     
-    observeEvent(signals$hour_map, {
-      signals$hour_map <- TRUE
+    observeEvent(signals$startrange_map, {
+      signals$startrange_map <- TRUE
       choices <- dir_df %>%
         filter(start.station.name == input$start_map,
                end.station.name == input$stop_map,
                dayofweek == input$dayofweek_map) %>%
-        select(starthour)
+        select(startrange)
       
       choices <- sort(unique(choices[,1]))
       
       updateSelectInput(session = session,
-                        inputId = 'hour_map',
+                        inputId = 'startrange_map',
                         choices = choices,
                         selected = choices[1])
       signals$leaflet_map <- FALSE
@@ -87,7 +88,7 @@ shinyServer(
       filter (start.station.name == input$start_map,
               end.station.name == input$stop_map,
               dayofweek == input$dayofweek_map,
-              starthour == input$hour_map) %>%
+              startrange == input$startrange_map) %>%
       group_by(start.lat_long, end.lat_long) %>%
       summarise(avg_duration = mean(tripduration.min))
     })
@@ -162,13 +163,13 @@ shinyServer(
         filter (start.station.name == input$start_map,
                 end.station.name == input$stop_map,
                 dayofweek == input$dayofweek_map,
-                starthour == input$hour_map) %>%
-        group_by(start.lat_long, end.lat_long) %>%
+                startrange == input$startrange_map) %>%
+        group_by(start.lat_long, end.lat_long, startrange, dayofweek) %>%
         summarise(avg_duration = mean(tripduration.min, na.rm=TRUE))
       if(length(citibike_time$avg_duration)==0){
         tmp = 'Not provided'
       }else{
-        tmp = paste(citibike_time$avg_duration, 'min')
+        tmp = paste(round(citibike_time$avg_duration,1), 'min')
       }
       infoBox("CitiBike estimated duration:",
               tmp, 
