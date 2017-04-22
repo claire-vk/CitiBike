@@ -20,7 +20,7 @@ melt_df = readRDS('./www/201605-citibike-tripdata_melt.rda')
 dir_df = readRDS('./www/201605-citibike-tripdata_direction.rda')
 
 #import icons
-bike_icon = makeIcon('www/bikeiconbw.png', iconWidth = 25, iconHeight = 38)
+bike_icon = makeIcon('www/bike_icon.png', iconWidth = 30, iconHeight = 35)
 
 #gMap API key
 key = "AIzaSyB1Oq-rYunwKh-I0Cgx0z2nCy0m8T5FukA"

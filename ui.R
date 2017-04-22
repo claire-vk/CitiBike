@@ -75,12 +75,13 @@ shinyUI(dashboardPage(
                               label = 'Day of week:', 
                               choices = Dayofweek, 
                               selected = Dayofweek[1]),
-                  sliderInput(inputId = "time_tile", 
-                              label = "Time of day:", 
-                              0, 24, c(6,10)),
                   radioButtons(inputId = 'startstop_tile',
-                               label = '',
-                               choices = c('departing', 'arriving')),
+                               label = 'Time of day:',
+                               choices = c('departing', 'arriving'),
+                               inline = TRUE),
+                  sliderInput(inputId = "time_tile", 
+                              label = "", 
+                              0, 24, c(6,10)),
                   width = 4
                 )
               )
