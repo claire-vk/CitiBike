@@ -222,7 +222,7 @@ shinyServer(
         group_by (start.station.latitude, start.station.longitude) %>%
         summarize(median = median(age))
       
-      medianage_df = medianage_df[sample(nrow(medianage_df),replace=F,size=0.5*nrow(medianage_df)),]
+      # medianage_df = medianage_df[sample(nrow(medianage_df),replace=F,size=0.5*nrow(medianage_df)),]
       
       ggmap(ggmap::get_map("New York City", zoom = 14)) + 
         geom_point(data=medianage_df, aes(x=start.station.longitude,
@@ -240,7 +240,7 @@ shinyServer(
                                         hjust = 0.025),
               legend.title = element_blank(),
               strip.text.x = element_blank()) + 
-        scale_color_gradient(low = "#b7d7eb", high = "#133145")
+        scale_color_gradient(low = "#ffffff", high = "#133145")
       })
 
     output$heatmap = renderPlotly({

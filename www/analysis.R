@@ -251,17 +251,63 @@ ggplot(data = weekends, aes(x=starthour, y = count)) +
                                   hjust = 0.025),
           legend.title = element_blank(),
           strip.text.x = element_blank()) +
-  scale_x_continuous(breaks = seq(min(weekdays$starthour), 
-                                        max(weekdays$starthour), by = 4))
+  scale_x_continuous(breaks = seq(min(weekends$starthour), 
+                                        max(weekends$starthour), by = 4))
 
-# looking at median age per area
+# split by age group
+weekdays_agegroup = df %>% 
+    filter(!dayofweek %in% c('Saturday', 'Sunday')) %>% 
+    group_by(starthour, agegroup) %>% 
+    summarise(count = n())
+
+ggplot(data = weekdays_agegroup, aes(x=starthour, y = count, fill = agegroup)) + 
+    geom_histogram(stat = 'identity', position = 'fill') +
+    labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekends)') +
+    theme_pander() +
+    theme(axis.line=element_blank(),
+          axis.ticks=element_blank(),
+          plot.title = element_text(size = 22, 
+                                    face = 'bold',
+                                    color = 'grey28',
+                                    margin = margin(10,0,10,0),
+                                    family = 'Helvetica',
+                                    hjust = 0.025),
+          legend.title = element_blank(),
+          strip.text.x = element_blank()) +
+    scale_x_continuous(breaks = seq(min(weekdays_agegroup$starthour), 
+                                    max(weekdays_agegroup$starthour), by = 4))
+
+
+weekdends_agegroup = df %>% 
+    filter(dayofweek %in% c('Saturday', 'Sunday')) %>% 
+    group_by(starthour, agegroup) %>% 
+    summarise(count = n())
+
+ggplot(data = weekdends_agegroup, aes(x=starthour, y = count, fill = agegroup)) + 
+    geom_histogram(stat = 'identity', position = 'fill') +
+    labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekends)') +
+    theme_pander() +
+    theme(axis.line=element_blank(),
+          axis.ticks=element_blank(),
+          plot.title = element_text(size = 22, 
+                                    face = 'bold',
+                                    color = 'grey28',
+                                    margin = margin(10,0,10,0),
+                                    family = 'Helvetica',
+                                    hjust = 0.025),
+          legend.title = element_blank(),
+          strip.text.x = element_blank()) +
+    scale_x_continuous(breaks = seq(min(weekdends_agegroup$starthour), 
+                                    max(weekdends_agegroup$starthour), by = 4))
+
+# looking at median age per area (start station)
 
 medianage_df = df %>% 
     select(age, start.station.latitude, start.station.longitude) %>% 
     group_by (start.station.latitude, start.station.longitude) %>%
     summarize(median = median(age))
 
-medianage_df = medianage_df[sample(nrow(medianage_df),replace=F,size=0.5*nrow(medianage_df)),]
+# medianage_df = medianage_df[sample(nrow(medianage_df),replace=F,size=0.5*nrow(medianage_df)),]
 
 ggmap(ggmap::get_map("New York City", zoom = 14)) + 
     geom_point(data=medianage_df, aes(x=start.station.longitude,
@@ -279,7 +325,57 @@ ggmap(ggmap::get_map("New York City", zoom = 14)) +
                                     hjust = 0.025),
           legend.title = element_blank(),
           strip.text.x = element_blank()) + 
-    scale_color_gradient(low = "#b7d7eb", high = "#133145")
+    scale_color_gradient(low = "#ffffff", high = "#133145")
+
+#median age per area(stop)
+medianage_df = df %>% 
+        select(age, end.station.latitude, end.station.longitude) %>% 
+        group_by (end.station.latitude, end.station.longitude) %>%
+        summarize(median = median(age))
+      
+      # medianage_df = medianage_df[sample(nrow(medianage_df),replace=F,size=0.5*nrow(medianage_df)),]
+      
+      ggmap(ggmap::get_map("New York City", zoom = 14)) + 
+        geom_point(data=medianage_df, aes(x=end.station.longitude,
+                                          y=end.station.latitude, 
+                                          color = median), size=8, alpha=0.8) + 
+        theme_map() +
+        labs(x = "", y = "", title = 'Median Age per Area') +
+        theme(axis.line=element_blank(),
+              axis.ticks=element_blank(),
+              plot.title = element_text(size = 22, 
+                                        face = 'bold',
+                                        color = 'grey28',
+                                        margin = margin(10,0,10,0),
+                                        family = 'Helvetica',
+                                        hjust = 0.025),
+              legend.title = element_blank(),
+              strip.text.x = element_blank()) + 
+        scale_color_gradient(low = "#ffffff", high = "#133145")
+
+# concentration of Citi Bike rides
+medianage_df = df %>% 
+    select(age, start.station.latitude, start.station.longitude) %>% 
+    group_by (start.station.latitude, start.station.longitude) %>%
+    summarize(median = median(age))
+
+    ggmap(get_map('New York',zoom=12, maptype='terrain')) +
+    stat_density2d(data= medianage_df, aes(x = medianage_df$start.station.longitude, y = medianage_df$start.station.latitude, alpha=.25, fill=..level..),bins = 10, geom = 'polygon')+
+    guides(fill = guide_colorbar(barwidth = 1, barheight = 8)) +
+    scale_alpha(guide = FALSE)+ 
+    theme_map() +
+    labs(x = "", y = "", title = 'Concentration of Citi Bike Rides') +
+    theme(axis.line=element_blank(),
+          axis.ticks=element_blank(),
+          plot.title = element_text(size = 22, 
+                                    face = 'bold',
+                                    color = 'grey28',
+                                    margin = margin(10,0,10,0),
+                                    family = 'Helvetica',
+                                    hjust = 0.025),
+          legend.title = element_blank(),
+          strip.text.x = element_blank())
+
 
 ## STEP 3- DATA CLEANING
 # remove outliers & keep only the relevant variables. The table will be filtered a bit more in part 1 and part 2.
