@@ -553,7 +553,7 @@ leaflet() %>%
 # missing the data with # of docks available per station. Unfortunately, data can't be scraped on Citi Bike's website.
 
 # 2- Limited scope
-# only took the data for May 2016 and we expect the Citi Bike riders to behave differently depedning on the season, temperature, etc. 
+# only took the data for May 2016 and we expect the Citi Bike riders to behave differently depending on the season, temperature, etc. 
 
 # 3- Limited # of variables
 # Would have liked to have more demographics data (aside from gender and age). Also, it would

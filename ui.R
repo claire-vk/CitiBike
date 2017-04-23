@@ -20,7 +20,8 @@ shinyUI(dashboardPage(
       menuItem("Background & Data Analysis", tabName = "intro", icon = icon("book")),
       menuItem("Step 1- When", tabName = "when", icon = icon("calendar-times-o")),
       menuItem("Step 2- Where", tabName = "where", icon = icon("map-marker")),
-      menuItem("Step 3- How", tabName = "how", icon = icon("map-signs"))
+      menuItem("Step 3- How", tabName = "how", icon = icon("map-signs")),
+      menuItem("Woulda, Shoulda, Coulda", tabName = "wouldcouldshould", icon = icon("spinner"))
     )
   ),
   
@@ -164,7 +165,7 @@ shinyUI(dashboardPage(
               
       tabItem(tabName = 'when',
               fluidRow(
-                box(title = "Step 1- Find the best day and time of the day",
+                box(title = h3("Step 1- Find the best day and time of the day"),
                     plotlyOutput('heatmap', height = 600),
                     width = 8),
                 box(
@@ -184,7 +185,7 @@ shinyUI(dashboardPage(
       
       tabItem(tabName = "where",
               fluidRow(
-                box(title = 'Step 2- Locate the most concentrated areas',
+                box(title = h3('Step 2- Locate the most concentrated areas'),
                     leafletOutput('tile', height = 600),
                     width = 8),
                 box(
@@ -216,7 +217,7 @@ shinyUI(dashboardPage(
       tabItem(tabName = "how",
               fluidRow(infoBoxOutput("durationGoogle"),
                        infoBoxOutput("durationCitibike")),
-              fluidRow(box(title = 'Step 3- Plan your ride',
+              fluidRow(box(title = h3('Step 3- Plan your ride'),
                            leafletOutput('map', height = 500), 
                            width = 8),
                        
@@ -237,9 +238,32 @@ shinyUI(dashboardPage(
                                        choices = Startrange,
                                        selected = Startrange[1]),
                             width = 4)
-              )
-      )
-    )
-  )
-)
+              )),
+
+
+            tabItem(tabName = "wouldcouldshould",
+              wellPanel(fluidRow(
+                column(6,
+                  h1("Would Have, Should Have, Could Have"),
+                    br(),
+                    p("This is the first of the four projects from the NYC Data Science Academy Data Science Bootcamp program.
+                    With a two-week timeline and only 24 hours in a day, some things gotta give... Below is a quick list of the analysis I
+                    could have, would have and should have done if given more time and data:",
+                    style= "font-size: 18px"),
+                    tags$div(tags$ul(
+                    tags$li(tags$span(strong("Limited scope"), ": I only took the data from May 2016. However, I expect the Citi Bike riders 
+                                        to behave differently depenging on the season, temperature, etc. Besides, the bigger the sample size
+                                        the more reliable the insights are.")), 
+                    tags$li(tags$span(strong("Missing data"),": There was no data on the docks available per station that could be scraped from the Citi Bike website.
+                                      The map would have been more complete if the availability of docks had been displayed.")),
+                    tags$li(tags$span(strong("Limited number of variables"),": I would have liked to have more demographics data (aside from gender and age); a dating app
+                    with only the age and gender as filters is restrictive...")),
+                    tags$li(tags$span("Finally, I would have liked to track unique users. Although users don't have a unique identifier 
+                      in the Citi Bike dataset, I could have identified unique users by looking at their gender, age, zip and usual start/end stations."))), 
+                    style= "font-size: 18px")),
+                column(6,
+                    img(src = 'http://www.freetoursbyfoot.com/wp-content/uploads/2014/10/Spring_Lafayette_citibike_opening_jeh.jpg', 
+                      width=450, height=500, alt="Citi Bike Free Bike")))))
+            ))
+            )
 )
