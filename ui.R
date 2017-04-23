@@ -17,7 +17,7 @@ shinyUI(dashboardPage(
       image = 'picture.png'),
     
     sidebarMenu(
-      menuItem("The Data", tabName = "intro", icon = icon("book")),
+      menuItem("Background & Data Analysis", tabName = "intro", icon = icon("book")),
       menuItem("Step 1- When", tabName = "when", icon = icon("calendar-times-o")),
       menuItem("Step 2- Where", tabName = "where", icon = icon("map-marker")),
       menuItem("Step 3- How", tabName = "how", icon = icon("map-signs"))
@@ -46,24 +46,24 @@ shinyUI(dashboardPage(
                   p("This is why I decided to take a different approach and use the Citi Bike data 
                      to help its users instead.",
                     style= "font-size: 18px")),
-                  column(6,
-                    img(src = 'https://d21xlh2maitm24.cloudfront.net/nyc/day-passes.png?mtime=20170331123924', 
-                        width=450, height=300, alt="Citi Bike couple")))),
+                column(6,
+                  img(src = 'https://d21xlh2maitm24.cloudfront.net/nyc/day-passes.png?mtime=20170331123924', 
+                      width=450, height=300, alt="Citi Bike couple")))),
 
               wellPanel(fluidRow(
                 column(6,
                   img(src = 'http://images2.miaminewtimes.com/imager/citi-bike-launches-in-miami-this-saturday/u/original/6505436/citibike_wynwood_colorful.jpg', 
                         width=450, height=300, alt="Citi Bike couple with graffiti in bg")),
-                  column(6,
-                    h2("The Challenge"),
-                    br(),
-                    p("The online dating scene is complicated and unreliable: 
+                column(6,
+                  h2("The Challenge"),
+                  br(),
+                  p("The online dating scene is complicated and unreliable: 
                       there is a discrepancy between what online daters say and what they do. 
                       Although this challenge is not relevant to me anymore - I am married - I wished that, as a bike enthusiast, 
                       I had a platform where I could have spotted like-minded people who did ride a bike (and not just pretend they did).", 
                       style= "font-size: 18px"),
-                    br(),
-                    p("The goal of this project was to turn the Citi Bike data into an app where a rider could identify the best 
+                  br(),
+                  p("The goal of this project was to turn the Citi Bike data into an app where a rider could identify the best 
                       spots and times to meet other Citi Bike users and cyclists in general.", 
                       style= "font-size: 18px")))),
 
@@ -84,18 +84,83 @@ shinyUI(dashboardPage(
                     tags$li(tags$span("Rider’s gender and birth year - this is the only demographic data we have.")),
                     tags$li(tags$span("Rider’s plan (annual subscriber, 7-day pass user or 1-day pass user)")),
                     tags$li(tags$span("Bike ID"))), style= "font-size: 18px")),
-                  column(6,
-                    img(src = 'https://d21xlh2maitm24.cloudfront.net/nyc/day-passes.png?mtime=20170331123924', 
-                        width=450, height=300, alt="Citi Bike couple")))),
+                column(6,
+                  img(src = 'http://www.streetsblog.org/wp-content/uploads/2014/04/nycbikeshare_journeys.png', 
+                      width=450, height=600, alt="Citi Bike Map")))),
 
-              plotOutput('histogram'),
-              plotOutput('boxplt'),
-              tableOutput('duration_med'),
-              plotOutput('density'),
-              plotOutput('weekdays'),
-              plotOutput('weekends'),
-              plotOutput('medianage')
-              ),
+              wellPanel(fluidRow(
+                column(6,
+                  plotOutput('histogram')),
+                column(6,
+                  h2("Riders per Age Group"),
+                  br(),
+                  p("Before moving ahead with building the app, I was interested in exploring the data and identifying patterns in relation 
+                      to gender, age and day of the week. Answering the following questions helped identify which variables influence 
+                      how riders use the Citi Bike system and form better features for the app:" ,style= "font-size: 18px"),
+                    tags$div(tags$ul(
+                    tags$li(tags$span("Who are the primary users of Citi Bike?")), 
+                    tags$li(tags$span("What is the median age per Citi Bike station?")), 
+                    tags$li(tags$span("How do the days of the week impact biking behaviours?"))), style= "font-size: 18px"), 
+                  p("As I expected, based on my daily rides from Queens to Manhattan, 75% of the Citi Bike trips are taken by males. 
+                      The primary users are 25 to 24 years old.", 
+                      style= "font-size: 18px")))),
+
+              wellPanel(fluidRow(
+                column(6,
+                  h2("Distribution of Riders per Hour of the Day (weekdays)"),
+                  br(),
+                  p("However, while we might expect these young professionals to be the primary users during the weekdays around 8-9am and 5-6pm 
+                    (when they commute to and from work), and the older audience to take over the Citi Bike system midday, this hypothesis 
+                    proved to be wrong. The tourists didn’t have anything to do with it; the short term customers only represent 10% of the dataset.",
+                    style= "font-size: 18px")),
+                column(6,
+                  plotOutput('histogram_hourofday')))),
+
+              wellPanel(fluidRow(
+                column(6,
+                  plotOutput('medianage')),
+                column(6,
+                    h2("Median Age per Departure"),
+                    br(),
+                    p("Looking at the median age of the riders for each station departure, we see the youngest riders 
+                      in East Village, while older riders start their commute from Lower Manhattan. The age trends disappear 
+                      when mapping the station arrival, above all in the financial district (in Lower Manhattan), which is 
+                      populated by the young wolves of Wall Street.", style= "font-size: 18px"),
+                    br(),
+                    p("The map shows and confirms that the Citi Bike riders are mostly 
+                      between 30 and 45 years old.", style= "font-size: 18px")))),
+
+              wellPanel(fluidRow(
+                column(6,
+                  h2("Rides by Hour of the Day"),
+                  br(),
+                  p("Finally, when analyzing how the days of the week impact biking behaviours, I was surprised to see that Citi Bike users 
+                    didn’t ride for a longer period of time during the weekend. However, there is a difference in peak hours; 
+                    during the weekend, riders hop on a bike later during the day, with most of the rides happening midday while the peak 
+                    hours during the weekdays are around 8-9am and 5-7pm when riders commute to and from work.",
+                    style= "font-size: 18px")),
+                column(3,
+                  plotOutput('weekdays')),
+                column(3,
+                  plotOutput('weekends')))),
+
+            wellPanel(fluidRow(
+                column(6,
+                    img(src = 'https://d21xlh2maitm24.cloudfront.net/nyc/The-Citi-Bike-App.png?mtime=20160420165732', 
+                      width=450, height=233, alt="Citi Bike couple")),
+                column(6,
+                  h2("The App"),
+                    br(),
+                    strong("Where does this analysis leave us?",
+                    style= "font-size: 18px"),
+                    tags$div(tags$ul(
+                    tags$li(tags$span("The day of the week and the hour of the day are meaningful variables which we need to take into account in the app. ")), 
+                    tags$li(tags$span("Most of the users are between 30 and 45 years. This means that the age groups 25-34 and 35-44 
+                                      won’t be granular enough when app users need to filter their search. We will let them filter by age instead."))), 
+                    style= "font-size: 18px"),  
+                    br(),
+                    p("Head to the first step of the app to get started!",
+                    style= "font-size: 20px"))))),
               
       tabItem(tabName = 'when',
               fluidRow(

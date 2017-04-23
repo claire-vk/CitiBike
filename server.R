@@ -102,69 +102,58 @@ shinyServer(
     output$histogram = renderPlot({
       ggplot(data = df, aes(x=agegroup, fill= gender)) + 
         geom_histogram(stat='count') + 
-        labs(x = "", y = "", title = '# of Riders per Age Group') +
+        labs(x = "", y = "", title = '') +
         theme_pander() +
         theme(axis.line=element_blank(),
               axis.text.y=element_blank(),
               axis.ticks=element_blank(),
-              plot.title = element_text(size = 22, 
+              plot.title = element_text(size = 20, 
                                         face = 'bold',
                                         color = 'grey28',
                                         margin = margin(10,0,10,0),
                                         family = 'Helvetica',
                                         hjust = 0.025),
               legend.title = element_blank(),
+              legend.position="bottom",
               strip.text.x = element_blank()) +
         facet_grid(~gender)
     })
 
-    output$boxplt = renderPlot({
-    df$dayofweek = factor(df$dayofweek, levels = c("Sunday", "Saturday", "Friday", "Thursday", "Wednesday", "Tuesday", "Monday"))
 
-    ggplot(data = df, aes(x=dayofweek, y= tripduration.min)) +
-      geom_boxplot(outlier.colour = "dodgerblue3", alpha = 0.1) +
-      labs(x = "", y = "", title = 'Identifying Outliers : Trip Duration (minutes)') +
-      coord_flip(ylim=c(0,60)) + 
-      theme_pander() +
-      theme(axis.line=element_blank(),
-            axis.ticks=element_blank(),
-            legend.title = element_blank(),
-            plot.title = element_text(size = 22, 
-                                    face = 'bold',
-                                    color = 'grey28',
-                                    margin = margin(10,0,10,0),
-                                    family = 'Helvetica',
-                                    hjust = 0.25,
-                                    vjust = 5))
-    })
+    output$histogram_hourofday = renderPlot({
+      weekdays_agegroup = df %>% 
+    filter(!dayofweek %in% c('Saturday', 'Sunday')) %>% 
+    group_by(starthour, agegroup) %>% 
+    summarise(count = n())
 
-    output$duration_med = renderTable({
-    duration_table = df %>% 
-                        group_by(gender, agegroup) %>% 
-                        summarise(Median = round(median(tripduration.min),1))
+    ggplot(data = weekdays_agegroup, aes(x=starthour, y = count, fill = agegroup)) + 
+        geom_histogram(stat = 'identity', position = 'fill') +
+        labs(x = "", y = "", title = '') +
+        scale_fill_economist() +
+        theme_pander() +
+        theme(axis.line=element_blank(),
+              axis.ticks=element_blank(),
+              plot.title = element_text(size = 20, 
+                                        face = 'bold',
+                                        color = 'grey28',
+                                        margin = margin(10,0,10,0),
+                                        family = 'Helvetica',
+                                        hjust = 0.025),
+              legend.title = element_blank(),
+              legend.position="bottom",
+              strip.text.x = element_blank()) +
+        scale_x_continuous(breaks = seq(min(weekdays_agegroup$starthour), 
+                                        max(weekdays_agegroup$starthour), by = 4)) 
+            })
 
-    dcast(duration_table, agegroup ~ gender)
-    }, caption=paste("Median Trip Duration (minutes) per Age Group and Gender")
-    )
+    # output$duration_med = renderTable({
+    # duration_table = df %>% 
+    #                     group_by(gender, agegroup) %>% 
+    #                     summarise(Median = round(median(tripduration.min),1))
 
-    output$density = renderPlot({
-    ggplot(data = df, aes(x=tripduration.min, fill = gender, color = gender)) + 
-    geom_density(alpha = 0.1) + 
-    labs(x = "", y = "", title = 'Trip Duration (minutes) per Age Group') +
-    coord_cartesian(xlim=c(0,90)) +
-    theme_pander() +
-    theme(axis.line=element_blank(),
-          axis.text.y=element_blank(),
-          axis.ticks=element_blank(),
-          legend.title = element_blank(),
-          plot.title = element_text(size = 22, 
-                                    face = 'bold',
-                                    color = 'grey28',
-                                    margin = margin(10,0,10,0),
-                                    family = 'Helvetica',
-                                    hjust = 0.025)) +
-    facet_wrap(~agegroup, strip.position = 'left')
-    })
+    # dcast(duration_table, agegroup ~ gender)
+    # }, caption=paste("Median Trip Duration (minutes) per Age Group and Gender")
+    # )
 
     output$weekdays = renderPlot({
       weekdays = df %>% 
@@ -174,17 +163,17 @@ shinyServer(
     
     ggplot(data = weekdays, aes(x=starthour, y = count)) + 
       geom_histogram(stat = 'identity', color = "dodgerblue3", fill = "dodgerblue3") +
-      labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekdays)') +
+      labs(x = "", y = "", title = 'Weekdays') +
       theme_pander() +
       theme(axis.line=element_blank(),
             axis.text.y=element_blank(),
             axis.ticks=element_blank(),
-            plot.title = element_text(size = 22, 
+            plot.title = element_text(size = 18, 
                                       face = 'bold',
                                       color = 'grey28',
                                       margin = margin(10,0,10,0),
                                       family = 'Helvetica',
-                                      hjust = 0.025),
+                                      hjust = 0.5),
             legend.title = element_blank(),
             strip.text.x = element_blank()) +
         scale_x_continuous(breaks = seq(min(weekdays$starthour), 
@@ -199,17 +188,17 @@ shinyServer(
     
     ggplot(data = weekends, aes(x=starthour, y = count)) + 
       geom_histogram(stat = 'identity', color = "dodgerblue3", fill = "dodgerblue3") +
-      labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekends)') +
+      labs(x = "", y = "", title = 'Weekends') +
       theme_pander() +
       theme(axis.line=element_blank(),
             axis.text.y=element_blank(),
             axis.ticks=element_blank(),
-            plot.title = element_text(size = 22, 
+            plot.title = element_text(size = 18, 
                                       face = 'bold',
                                       color = 'grey28',
                                       margin = margin(10,0,10,0),
                                       family = 'Helvetica',
-                                      hjust = 0.025),
+                                      hjust = 0.5),
             legend.title = element_blank(),
             strip.text.x = element_blank()) +
       scale_x_continuous(breaks = seq(min(weekends$starthour), 
@@ -229,10 +218,10 @@ shinyServer(
                                           y=start.station.latitude, 
                                           color = median), size=8, alpha=0.8) + 
         theme_map() +
-        labs(x = "", y = "", title = 'Median Age per Area') +
+        labs(x = "", y = "", title = '') +
         theme(axis.line=element_blank(),
               axis.ticks=element_blank(),
-              plot.title = element_text(size = 22, 
+              plot.title = element_text(size = 20, 
                                         face = 'bold',
                                         color = 'grey28',
                                         margin = margin(10,0,10,0),

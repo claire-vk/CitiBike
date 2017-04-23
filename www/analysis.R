@@ -262,7 +262,8 @@ weekdays_agegroup = df %>%
 
 ggplot(data = weekdays_agegroup, aes(x=starthour, y = count, fill = agegroup)) + 
     geom_histogram(stat = 'identity', position = 'fill') +
-    labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekends)') +
+    labs(x = "", y = "", title = '# of Riders per Hour of the Day (Weekdays)') +
+    scale_fill_economist() +
     theme_pander() +
     theme(axis.line=element_blank(),
           axis.ticks=element_blank(),
@@ -275,7 +276,7 @@ ggplot(data = weekdays_agegroup, aes(x=starthour, y = count, fill = agegroup)) +
           legend.title = element_blank(),
           strip.text.x = element_blank()) +
     scale_x_continuous(breaks = seq(min(weekdays_agegroup$starthour), 
-                                    max(weekdays_agegroup$starthour), by = 4))
+                                    max(weekdays_agegroup$starthour), by = 4)) 
 
 
 weekdends_agegroup = df %>% 
@@ -314,7 +315,7 @@ ggmap(ggmap::get_map("New York City", zoom = 14)) +
                                       y=start.station.latitude, 
                                       color = median), size=8, alpha=0.8) + 
     theme_map() +
-    labs(x = "", y = "", title = 'Median Age per Area') +
+    labs(x = "", y = "", title = 'Median Age per Departure Station') +
     theme(axis.line=element_blank(),
           axis.ticks=element_blank(),
           plot.title = element_text(size = 22, 
@@ -340,7 +341,7 @@ medianage_df = df %>%
                                           y=end.station.latitude, 
                                           color = median), size=8, alpha=0.8) + 
         theme_map() +
-        labs(x = "", y = "", title = 'Median Age per Area') +
+        labs(x = "", y = "", title = 'Median Age per Arrival Station') +
         theme(axis.line=element_blank(),
               axis.ticks=element_blank(),
               plot.title = element_text(size = 22, 
