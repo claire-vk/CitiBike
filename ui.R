@@ -41,7 +41,9 @@ shinyUI(dashboardPage(
               tableOutput('duration_med'),
               plotOutput('density'),
               plotOutput('weekdays'),
-              plotOutput('weekends')),
+              plotOutput('weekends'),
+              plotOutput('medianage')
+              ),
               
       tabItem(tabName = 'when',
               fluidRow(

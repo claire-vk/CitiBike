@@ -254,6 +254,33 @@ ggplot(data = weekends, aes(x=starthour, y = count)) +
   scale_x_continuous(breaks = seq(min(weekdays$starthour), 
                                         max(weekdays$starthour), by = 4))
 
+# looking at median age per area
+
+medianage_df = df %>% 
+    select(age, start.station.latitude, start.station.longitude) %>% 
+    group_by (start.station.latitude, start.station.longitude) %>%
+    summarize(median = median(age))
+
+medianage_df = medianage_df[sample(nrow(medianage_df),replace=F,size=0.5*nrow(medianage_df)),]
+
+ggmap(ggmap::get_map("New York City", zoom = 14)) + 
+    geom_point(data=medianage_df, aes(x=start.station.longitude,
+                                      y=start.station.latitude, 
+                                      color = median), size=8, alpha=0.8) + 
+    theme_map() +
+    labs(x = "", y = "", title = 'Median Age per Area') +
+    theme(axis.line=element_blank(),
+          axis.ticks=element_blank(),
+          plot.title = element_text(size = 22, 
+                                    face = 'bold',
+                                    color = 'grey28',
+                                    margin = margin(10,0,10,0),
+                                    family = 'Helvetica',
+                                    hjust = 0.025),
+          legend.title = element_blank(),
+          strip.text.x = element_blank()) + 
+    scale_color_gradient(low = "#b7d7eb", high = "#133145")
+
 ## STEP 3- DATA CLEANING
 # remove outliers & keep only the relevant variables. The table will be filtered a bit more in part 1 and part 2.
 df = filter(df, age <= 85 & tripduration.min <= 120)
@@ -426,16 +453,22 @@ leaflet() %>%
 
 ## Could have, should have, would have
 # 1- Missing data
-# missing the data with # of docks available per station. Unfortunately, data can't be scraped on citibike website.
+# missing the data with # of docks available per station. Unfortunately, data can't be scraped on Citi Bike's website.
 
 # 2- Limited scope
-# only took the data for May 2017 and we expect the citibike riders to behave differently depedning on the season, temperature, etc. 
+# only took the data for May 2016 and we expect the Citi Bike riders to behave differently depedning on the season, temperature, etc. 
 
-# 3- sub-efficient code
+# 3- Limited # of variables
+# Would have liked to have more demographics data (aside from gender and age). Also, it would
+# have been nice to have a way to track unique users (although we probably identify users from 
+# gender, age, zip and start/end station).
+
+# 4- Package issues
+# Mapping Citi Bike’s Riders, Not Just Rides using rgdal
+
+# 4- sub-efficient code
 # did not use data.table format
 
-# 4- aesthetics
-# would have liked to add the estimated count and color icons accordingly
 
 
 

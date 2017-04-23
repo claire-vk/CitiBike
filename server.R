@@ -212,10 +212,37 @@ shinyServer(
                                       hjust = 0.025),
             legend.title = element_blank(),
             strip.text.x = element_blank()) +
-      scale_x_continuous(breaks = seq(min(weekdays$starthour), 
-                                      max(weekdays$starthour), by = 4))
+      scale_x_continuous(breaks = seq(min(weekends$starthour), 
+                                      max(weekends$starthour), by = 4))
     })
+
+    output$medianage = renderPlot({
+      medianage_df = df %>% 
+        select(age, start.station.latitude, start.station.longitude) %>% 
+        group_by (start.station.latitude, start.station.longitude) %>%
+        summarize(median = median(age))
       
+      medianage_df = medianage_df[sample(nrow(medianage_df),replace=F,size=0.5*nrow(medianage_df)),]
+      
+      ggmap(ggmap::get_map("New York City", zoom = 14)) + 
+        geom_point(data=medianage_df, aes(x=start.station.longitude,
+                                          y=start.station.latitude, 
+                                          color = median), size=8, alpha=0.8) + 
+        theme_map() +
+        labs(x = "", y = "", title = 'Median Age per Area') +
+        theme(axis.line=element_blank(),
+              axis.ticks=element_blank(),
+              plot.title = element_text(size = 22, 
+                                        face = 'bold',
+                                        color = 'grey28',
+                                        margin = margin(10,0,10,0),
+                                        family = 'Helvetica',
+                                        hjust = 0.025),
+              legend.title = element_blank(),
+              strip.text.x = element_blank()) + 
+        scale_color_gradient(low = "#b7d7eb", high = "#133145")
+      })
+
     output$heatmap = renderPlotly({
        g = ggplot(heatmap_df(), aes(x=Time, y=Day, fill=Count)) +
          geom_tile(color="white", size=0.1) +
