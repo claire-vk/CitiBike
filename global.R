@@ -13,6 +13,7 @@ library(plotly)
 library(ggmap)
 library(shinydashboard)
 library(googleway)
+library(dtplyr)
 
 #import df
 df = readRDS('./www/201605-citibike-tripdata_df.rda')

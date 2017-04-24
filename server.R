@@ -32,8 +32,8 @@ shinyServer(
       melt_df = melt_df[sample(nrow(melt_df),replace=F,size=0.1*nrow(melt_df)),]
       
       melt_df %>% filter(gender == input$gender_tile, 
-                         age > input$age_tile[1], age < input$age_tile[2], 
-                         hour > input$time_tile[1], hour < input$time_tile[2], 
+                         age >= input$age_tile[1], age <= input$age_tile[2], 
+                         hour >= input$time_tile[1], hour <= input$time_tile[2], 
                          dayofweek == input$dayofweek_tile, 
                          time == switch(input$startstop_tile,'departing' = 'start','arriving' = 'stop'))
     })
