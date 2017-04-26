@@ -79,11 +79,11 @@ shinyUI(dashboardPage(
                   p("I used the Citi Bike data for the month of May 2016 (approximately 1 million observations). Citi Bike provides 
                     the following variables:",style= "font-size: 18px"),
                   tags$div(tags$ul(
-                    tags$li(tags$span("Trip duration (in seconds)")), 
-                    tags$li(tags$span("Timestamps for when the trip started and ended")), 
-                    tags$li(tags$span("Station locations for where the trip started and ended (both the names and coordinates)")),
+                    tags$li(tags$span("Trip duration (in seconds).")), 
+                    tags$li(tags$span("Timestamps for when the trip started and ended.")), 
+                    tags$li(tags$span("Station locations for where the trip started and ended (both the names and coordinates).")),
                     tags$li(tags$span("Rider’s gender and birth year - this is the only demographic data we have.")),
-                    tags$li(tags$span("Rider’s plan (annual subscriber, 7-day pass user or 1-day pass user)")),
+                    tags$li(tags$span("Rider’s plan (annual subscriber, 7-day pass user or 1-day pass user).")),
                     tags$li(tags$span("Bike ID"))), style= "font-size: 18px")),
                 column(6,
                   img(src = 'http://www.streetsblog.org/wp-content/uploads/2014/04/nycbikeshare_journeys.png', 
@@ -112,7 +112,7 @@ shinyUI(dashboardPage(
                   br(),
                   p("However, while we might expect these young professionals to be the primary users during the weekdays around 8-9am and 5-6pm 
                     (when they commute to and from work), and the older audience to take over the Citi Bike system midday, this hypothesis 
-                    proved to be wrong. The tourists didn’t have anything to do with it; the short term customers only represent 10% of the dataset.",
+                    proved to be wrong. The tourists don’t have anything to do with it; the short term customers only represent 10% of the dataset.",
                     style= "font-size: 18px")),
                 column(6,
                   plotOutput('histogram_hourofday')))),
@@ -135,8 +135,8 @@ shinyUI(dashboardPage(
                 column(6,
                   h2("Rides by Hour of the Day"),
                   br(),
-                  p("Finally, when analyzing how the days of the week impact biking behaviours, I was surprised to see that Citi Bike users 
-                    didn’t ride for a longer period of time during the weekend. However, there is a difference in peak hours; 
+                  p("Finally, when analyzing how the days of the week impacted biking behaviours, I was surprised to see that Citi Bike users 
+                    didn’t ride for a longer period of time during the weekend: the median trip duration is 19 minutes for each day of the week. However, there is a difference in peak hours; 
                     during the weekend, riders hop on a bike later during the day, with most of the rides happening midday while the peak 
                     hours during the weekdays are around 8-9am and 5-7pm when riders commute to and from work.",
                     style= "font-size: 18px")),
@@ -258,6 +258,10 @@ shinyUI(dashboardPage(
                                       The map would have been more complete if the availability of docks had been displayed.")),
                     tags$li(tags$span(strong("Limited number of variables"),": I would have liked to have more demographics data (aside from gender and age); a dating app
                     with only the age and gender as filters is restrictive...")),
+                    tags$li(tags$span(strong("Incomplete filters"),": With more time, I'd have added a filter 'speed' in the 2nd step of the app
+                    (the 'where' part) to enable the hard core cyclists to filter the fastest ones...")),
+                    tags$li(tags$span(strong("Sub-optimal visualization"),": I am aware that the map in the introduction page (with the dots displaying the median age per station)
+                                      is hard to read and with more time, I'd have used polygons instead to group by neighbourhoods.")),
                     tags$li(tags$span("Finally, I would have liked to track unique users. Although users don't have a unique identifier 
                       in the Citi Bike dataset, I could have identified unique users by looking at their gender, age, zip and usual start/end stations."))), 
                     style= "font-size: 18px")),

@@ -3,9 +3,9 @@ title: Shiny Project _citibike
 account: claire-vk
 server: shinyapps.io
 appId: 174663
-bundleId: 801210
+bundleId: 805524
 url: https://claire-vk.shinyapps.io/shiny_project__citibike/
-when: 1493029181.22909
+when: 1493249863.82854
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: .RData|archive/.DS_Store|archive/201605-citibike-tripdata_archive_part1.rda|archive/201605-citibike-tripdata_archive_part2.rda|archive/201605-citibike-tripdata_archive.rda|archive/201605-citibike-tripdata_clean_part1.rda|archive/201605-citibike-tripdata_clean_part2.rda|archive/201605-citibike-tripdata_clean.rda|archive/201605-citibike-tripdata_df.rda|archive/201605-citibike-tripdata_direction copy.rda|archive/201605-citibike-tripdata_direction.rda|archive/201605-citibike-tripdata_melt.rda|archive/bikeiconblue.png|archive/bikeiconbw.png|archive/bikeicongreen.png|archive/citibike_finalcleaning.R|archive/citibike.R|archive/firstshinydraft.R|archive/nohourinput_global.R|archive/nohourinput_server.R|archive/nohourinput_UI.R|www/.DS_Store|www/.Rapp.history|www/201605-citibike-tripdata_clean.rda|www/201605-citibike-tripdata.csv|www/analysis.R
